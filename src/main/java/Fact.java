@@ -24,6 +24,11 @@ public final class Fact {
         int i;
 
         for(i = 1; i <= n; i++) {
+            try {
+                Thread.sleep(500l);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             result *= i;
         }
 
