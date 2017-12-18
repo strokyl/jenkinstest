@@ -43,31 +43,21 @@ pipeline {
                 sh mavenTest
 
                 sh "find . -name TEST-*.xml"
-                stash name: "report-${j}", includes: '**/*.java'
+                //stash name: "report-${j}", includes: '**/*.java'
               }
             }
           }
 
           parallel testGroups
 
-          stage('report') {
-            steps {
-              script {
-                for (int i = 0; i < splits.size(); i++) {
-                  unstash "report-${i}"
-                }
-
-                sh "find . -name TEST-*.xml"
-                step([$class: "JUnitResultArchiver", testResults: '**/target/surefire-reports/TEST-*.xml'])
-              }
-            } 
+          for (int i = 0; i < splits.size(); i++) {
+            //unstash "report-${i}"
           }
+
+          sh "find . -name TEST-*.xml"
+          step([$class: "JUnitResultArchiver", testResults: '**/target/surefire-reports/TEST-*.xml'])
         }
       }
-    }
-
-    stage('report') {
-    
     }
   }
 }
