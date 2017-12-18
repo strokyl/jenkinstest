@@ -1,14 +1,15 @@
 pipeline {
-  agent {
-    docker {
-      image 'maven:3.5.2-jdk-8'
-    }
-    
-  }
+  agent any
+  withMaven(
+    maven: 'M3',
+    mavenSettingsConfig: 'my-maven-settings',
+    mavenLocalRepo: '.repository'
+    ) {
+
   stages {
     stage('build') {
       steps {
-        sh '''mvn test-compile'''
+        mvn "test-compile"
       }
     }
 
@@ -25,7 +26,7 @@ pipeline {
             testGroups["split-${j}"] = {
               node {
                 unstash 'sources'
-                def mavenTest = 'mvn test -Dmaven.test.failure.ignore'
+                def mavenTest = 'test -Dmaven.test.failure.ignore'
 
                 echo split.toString()
                 if (split.list.size() > 0) {
@@ -43,7 +44,7 @@ pipeline {
                   echo "No split"
                 }
 
-                sh mavenTest
+                mvn mavenTest
 
                 sh "ls target/surefire-reports/TEST-*.xml"
                 step([$class: "JUnitResultArchiver", testResults: '**/target/surefire-reports/TEST-*.xml', keepLongStdio: true])
@@ -56,5 +57,6 @@ pipeline {
         }
       }
     }
+  }
   }
 }
