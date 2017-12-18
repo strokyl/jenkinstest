@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /****************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one   *
  * or more contributor license agreements.  See the NOTICE file *
@@ -19,12 +21,10 @@ import org.junit.jupiter.api.Test;
  * under the License.                                           *
  ****************************************************************/
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class FactTest1 {
+public class Fact4Test {
 
     @Test
-    public void zeroTest() {
-        assertEquals(1, Fact.fact(0));
+    public void testFour() {
+        assertEquals(24, Fact.fact(4));
     }
 }

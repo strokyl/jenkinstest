@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * under the License.                                           *
  ****************************************************************/
 
-public class FactTest4 {
+public class Fact2Test {
 
     @Test
-    public void threeTest() {
-        assertEquals(6, Fact.fact(3));
+    public void testTwo() {
+        assertEquals(2, Fact.fact(2));
     }
 }
