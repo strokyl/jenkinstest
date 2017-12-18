@@ -48,7 +48,9 @@ pipeline {
 
                 sh mavenTest
 
+                sh "find . -name TEST-*.xml"
                 junit '**/target/surefire-reports/TEST-*.xml'
+                echo "YOLO"
               }
             }
           }
