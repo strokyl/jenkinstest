@@ -8,27 +8,24 @@ pipeline {
   stages {
     stage('build') {
       steps {
-        dir(path: 'dockerfiles/compilation/java-8/') {
-          sh '''mvn test-compile'''
-        }
+        sh '''mvn test-compile'''
       }
     }
 
     stage('test') {
       steps {
         script {
+          stash name: 'sources', includes: 'pom.xml, src/'
           def splits = splitTests parallelism: [$class: 'CountDrivenParallelism', size: 4], generateInclusions: true
-
           def testGroups = [:]
-
           for (int i = 0; i < splits.size(); i++) {
             def j = i
             def split = splits[j]
 
             testGroups["split-${j}"] = {
               node {
-                checkout scm
-                def mavenTest = 'mvn test'
+                unstash 'sources'
+                def mavenTest = 'mvn test -Dmaven.test.failure.ignore'
 
                 echo split.toString()
                 if (split.list.size() > 0) {
@@ -48,8 +45,8 @@ pipeline {
 
                 sh mavenTest
 
-                sh "find . -name TEST-*.xml"
-                junit '**/target/surefire-reports/TEST-*.xml'
+                sh "ls target/surefire-reports/TEST-*.xml"
+                step([$class: "JUnitResultArchiver", testResults: '**/target/surefire-reports/TEST-*.xml', keepLongStdio: true])
                 echo "YOLO"
               }
             }
