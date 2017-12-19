@@ -33,10 +33,10 @@ pipeline {
                 if (split.list.size() > 0) {
                   if (split.includes) {
                     writeFile file: "target/parallel-test-includes-${j}.txt", text: split.list.join("\n")
-                    mavenTest += " -Dsurefire.includesFile=target/parallel-test-includes-${j}.txt"
+                    mavenTest += " -DincludesFile=target/parallel-test-includes-${j}.txt"
                   } else {
                     writeFile file: "target/parallel-test-excludes-${j}.txt", text: split.list.join("\n")
-                    mavenTest += " -Dsurefile.excludesFile=target/parallel-test-excludes-${j}.txt"
+                    mavenTest += " -DexcludesFile=target/parallel-test-excludes-${j}.txt"
                   }
                 }
 
