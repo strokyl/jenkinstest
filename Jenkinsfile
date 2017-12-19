@@ -10,7 +10,6 @@ pipeline {
       steps {
         sh 'mvn -B clean package -DskipTests'
         stash name: 'build', includes: 'pom.xml, src/, target/'
-        sh "find . -name TEST-*.xml"
       }
     }
 
@@ -29,13 +28,16 @@ pipeline {
                 unstash 'build'
                 def mavenTest = 'mvn -B test -Dmaven.test.failure.ignore'
 
-                echo split.toString()
                 if (split.list.size() > 0) {
                   if (split.includes) {
-                    writeFile file: "target/parallel-test-includes-${j}.txt", text: split.list.join("\n")
+                    def includes = split.list.join("\n")
+                    sh "echo \"${includes}\" >> target/parallel-test-includes-${j}.txt"
+
                     mavenTest += " -DincludesFile=target/parallel-test-includes-${j}.txt"
                   } else {
-                    writeFile file: "target/parallel-test-excludes-${j}.txt", text: split.list.join("\n")
+                    def excludes = split.list.join("\n")
+                    sh "echo \"${excludes}\" >> target/parallel-test-excludes-${j}.txt"
+
                     mavenTest += " -DexcludesFile=target/parallel-test-excludes-${j}.txt"
                   }
                 }
