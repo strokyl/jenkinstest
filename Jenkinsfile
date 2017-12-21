@@ -32,30 +32,28 @@ pipeline {
               def split = splits[j]
 
               testGroups["split-${j}"] = {
-                node {
-                  container('maven') {
-                    unstash 'build'
-                    def mavenTest = 'mvn -B test -Dmaven.test.failure.ignore'
+                container('maven') {
+                  unstash 'build'
+                  def mavenTest = 'mvn -B test -Dmaven.test.failure.ignore'
 
-                    if (split.list.size() > 0) {
-                      if (split.includes) {
-                        def includes = split.list.join("\n")
-                        sh "echo \"${includes}\" >> target/parallel-test-includes-${j}.txt"
+                  if (split.list.size() > 0) {
+                    if (split.includes) {
+                      def includes = split.list.join("\n")
+                      sh "echo \"${includes}\" >> target/parallel-test-includes-${j}.txt"
 
-                        mavenTest += " -DincludesFile=target/parallel-test-includes-${j}.txt"
-                      } else {
-                        def excludes = split.list.join("\n")
-                        sh "echo \"${excludes}\" >> target/parallel-test-excludes-${j}.txt"
+                      mavenTest += " -DincludesFile=target/parallel-test-includes-${j}.txt"
+                    } else {
+                      def excludes = split.list.join("\n")
+                      sh "echo \"${excludes}\" >> target/parallel-test-excludes-${j}.txt"
 
-                        mavenTest += " -DexcludesFile=target/parallel-test-excludes-${j}.txt"
-                      }
+                      mavenTest += " -DexcludesFile=target/parallel-test-excludes-${j}.txt"
                     }
-
-                    sh mavenTest
-
-                    sh "find . -name TEST-*.xml"
-                    //stash name: "report-${j}", includes: '**/*.java'
                   }
+
+                  sh mavenTest
+
+                  sh "find . -name TEST-*.xml"
+                  //stash name: "report-${j}", includes: '**/*.java'
                 }
               }
             }
