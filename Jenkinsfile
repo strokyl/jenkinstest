@@ -24,6 +24,7 @@ pipeline {
 
       steps {
         container('maven') {
+          sh 'sleep 3600'
           unstash 'build'
           sh 'mvn -B test -Dmaven.test.failure.ignore'
         }
